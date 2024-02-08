@@ -13,6 +13,7 @@ intents.messages = True
 
 client = discord.Client(intents = intents)
 
+members_by_name = {}
 
 @client.event
 async def on_ready():
@@ -38,18 +39,20 @@ async def on_message(message):
 
     # Check if the message is a reply and matches the bot's edited message
     if message.reference:
-        referenced_message = await message.channel.fetch_message(message.reference.message_id)
         if message.reference.resolved.author == client.user:
             original_author_name = message.reference.resolved.content.split('\n')[0][8:]
 
-            for guild in client.guilds:
-                await guild.fetch_members(limit=None).flatten()
-                original_author = discord.utils.get(guild.members, name = original_author_name)
-                reply_author = str(message.author.mention)
+            guild = message.guild
 
-                if original_author:
-                    await message.channel.send(f"{original_author.mention}, {reply_author[1:]} has replied to your link")
-                    break
+            await guild.fetch_members(limit=None).flatten()
+            original_author = discord.utils.get(guild.members, name = original_author_name)
+            reply_author = message.author
+
+            if original_author:
+                if reply_author.nick:
+                    await message.channel.send(f"{original_author.mention}, {reply_author.nick} has replied to your link")
+                else:
+                    await message.channel.send(f"{original_author.mention}, {reply_author.name} has replied to your link")
 
 client.run(TOKEN)
 

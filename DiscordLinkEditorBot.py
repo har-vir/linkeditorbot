@@ -106,7 +106,7 @@ client.run(TOKEN)
 
 
 # basic functionality done, can replace x and twitter with vxtwitter
-# now just make sure it's case insensitive
+# now just make sure it's case idnsensitive
 # then also delete users post
 # and add which user sent message in bot's message
 #DELETE PINGED MSG ONCE OP REPLIES TO QUOTED MSG

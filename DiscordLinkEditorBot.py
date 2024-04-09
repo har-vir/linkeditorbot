@@ -16,7 +16,6 @@ intents.messages = True
 client = discord.Client(intents = intents)
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-members_by_name = {}
 links = []
 
 
@@ -46,14 +45,13 @@ async def on_message(message):
         await message.channel.send(output)
         await message.delete()
 
-    # Check if the message is a reply and matches the bot's edited message
+    # Check if the message is a reply and matches the bots edited message
     if message.reference:
         if message.reference.resolved.author == client.user and "sent by" in message.reference.resolved.content:
             original_author_name = message.reference.resolved.content.split('\n')[0][8:]
 
             guild = message.guild
 
-            # await guild.fetch_members(limit=None).flatten()
             original_author = discord.utils.get(guild.members, name = original_author_name)
             reply_author = message.author
 
@@ -62,6 +60,18 @@ async def on_message(message):
                     await message.channel.send(f"{original_author.mention}, {reply_author.nick} has replied to your link")
                 else:
                     await message.channel.send(f"{original_author.mention}, {reply_author.name} has replied to your link")
+
+
+@bot.command()
+async def command(ctx):
+
+    channel = ctx.channel
+
+    commands = ["!input: add link to be edited by bot", "!remove: remove link from bot", "!fetch: fetch list of links"]
+
+    for command in commands:
+        await channel.send(command)
+
 
 @bot.command()
 async def input(ctx, arg):

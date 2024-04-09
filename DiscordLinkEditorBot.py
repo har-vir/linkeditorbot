@@ -3,17 +3,26 @@ import os
 
 import discord
 from dotenv import load_dotenv
+from discord.ext import commands
 
 load_dotenv('bot.env')
 TOKEN = os.getenv('DISCORD_TOKEN')
+
 
 intents = discord.Intents.default()
 intents.members = True
 intents.messages = True
 
 client = discord.Client(intents = intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 members_by_name = {}
+links = []
+
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord too!')
 
 @client.event
 async def on_ready():
@@ -39,12 +48,12 @@ async def on_message(message):
 
     # Check if the message is a reply and matches the bot's edited message
     if message.reference:
-        if message.reference.resolved.author == client.user:
+        if message.reference.resolved.author == client.user and "sent by" in message.reference.resolved.content:
             original_author_name = message.reference.resolved.content.split('\n')[0][8:]
 
             guild = message.guild
 
-            await guild.fetch_members(limit=None).flatten()
+            # await guild.fetch_members(limit=None).flatten()
             original_author = discord.utils.get(guild.members, name = original_author_name)
             reply_author = message.author
 
@@ -53,6 +62,44 @@ async def on_message(message):
                     await message.channel.send(f"{original_author.mention}, {reply_author.nick} has replied to your link")
                 else:
                     await message.channel.send(f"{original_author.mention}, {reply_author.name} has replied to your link")
+
+@bot.command()
+async def input(ctx, arg):
+
+    channel = ctx.channel
+
+    if arg not in links:
+        links.append(arg)
+        await channel.send("Link added")
+        print(links)
+    else:
+        await channel.send("Link already added")
+
+@bot.command()
+async def remove(ctx, arg):
+
+    channel = ctx.channel
+
+    if arg in links:
+        links.remove(arg)
+        await channel.send("Link removed")
+        print(links)
+    else:
+        await channel.send("Link not found")
+
+@bot.command()
+async def fetch(ctx):
+
+    channel = ctx.channel
+
+    if links:
+        for link in links:
+            await channel.send(link)
+    else:
+        await channel.send("You have no registered links")
+
+
+bot.run(TOKEN)
 
 client.run(TOKEN)
 

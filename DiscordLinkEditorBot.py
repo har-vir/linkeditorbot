@@ -15,7 +15,7 @@ intents.messages = True
 bot = commands.Bot(command_prefix='Lb!', intents=intents)
 
 links = {}
-protocols = ["http", "https"]
+
 
 @bot.event
 async def on_ready():
@@ -119,19 +119,7 @@ async def fetch(ctx):
         await channel.send("You have no registered links")
 
 
-#
-# def valid_link(link):
-#     if not link.startswith("http" or "https"):
-#         return False
-#     elif
-
-
 bot.run(TOKEN)
 
-# basic functionality done, can replace x and twitter with vxtwitter
-# now just make sure it's case idnsensitive
-# then also delete users post
-# and add which user sent message in bot's message
-# DELETE PINGED MSG ONCE OP REPLIES TO QUOTED MSG
-# message.author.mention to ping op
+
 # use nickname in the original edit instead of username
